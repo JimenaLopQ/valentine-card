@@ -3,7 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>San Valentín Invitation</title>
+    <title>Formulario de Respuesta</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,7 +15,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
     <style>
-        body {
+ body {
             background-color: #FBF3F3;
             margin: 0;
             font-family: "Poppins", serif;
@@ -145,19 +148,84 @@
 </head>
 <body>
 
-    <!-- Página de invitación -->
-    <div id="screen1" class="full-height">
-        <div class="container-custom">
-            <h1>Would you be my <br> valentine?</h1>
-            <p>Te hice esta página porque te amo mucho y estoy aburrida y quería hacer algo bonito <br>
-                Te amo 🌷</p>
-    
-            <div class="btn-container">
-                <button class="btn btn-sí btn-custom" onclick="location.href='form.html'">Sí, te amo</button>
-                <button class="btn btn-no btn-custom">No, te odio</button>
-            </div>
-        </div>
+
+<div id="pop-up" class="full-height">
+    <div class="container-custom">
+        <h1>Te amo mucho jj!</h1>
+        <form id="valentineForm">
+                <p>Escoge una fecha para celebrarlo</p>
+                <label for="date" class="form-label">Elige una fecha</label>
+                <input type="date" class="form-control" id="date" required>
+                <br>
+                <label>Escoge el tipo de cita</label>
+                <div class="grid-container">
+                    <div class="grid-item">
+                        <img src="img/cocinar.jpg" alt="Cocinar juntos" class="uniform-size">
+                        <p>Cocinar juntos</p>
+                    </div>
+                    <div class="grid-item">
+                        <img src="img/salir.jpg" alt="Ir a comer" class="uniform-size">
+                        <p>Ir a comer</p>
+                    </div>
+                    <div class="grid-item">
+                        <img src="img/picnic.jpg" alt="Picnic" class="uniform-size">
+                        <p>Picnic</p>
+                    </div>
+                    <div class="grid-item">
+                        <img src="img/pottery.jpg" alt="Pintar arcilla" class="uniform-size">
+                        <p>Pintar arcilla</p>
+                    </div>
+                </div>
+                <input type="text" class="form-control" id="dateType" required placeholder="Escribe tu cita preferida">
+                <br>
+                <button type="submit" class="btn btn-sí btn-custom">Enviar</button>
+        </form>
     </div>
-    
-    </body>
-    </html>
+</div>
+
+    <!-- Firebase App (Base SDK) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
+        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBxneMVg6-RKuLtdBB9hA_y0kS6BbLljuE",
+            authDomain: "valentines-card-6b635.firebaseapp.com",
+            projectId: "valentines-card-6b635",
+            storageBucket: "valentines-card-6b635.appspot.com",
+            messagingSenderId: "539718504744",
+            appId: "1:539718504744:web:aca7da9528155b1ca8801d",
+            measurementId: "G-5YVN7RWXCT"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        document.getElementById('valentineForm').addEventListener('submit', async function(event) {
+        event.preventDefault();
+        
+        const date = document.getElementById('date').value;
+        const dateType = document.getElementById('dateType').value;
+
+        // Agregar logs para verificar los valores
+        console.log('Fecha seleccionada:', date);
+        console.log('Tipo de cita:', dateType);
+
+        try {
+            await addDoc(collection(db, 'valentineResponses'), {
+                date: date,
+                dateType: dateType
+            });
+            alert('¡Tu respuesta ha sido enviada!');
+            document.getElementById('valentineForm').reset();
+        } catch (e) {
+            console.error("Error al guardar la respuesta: ", e);
+            alert('Hubo un error al enviar tu respuesta. Por favor, inténtalo de nuevo.');
+        }
+    });
+    </script>
+
+</body>
+</html>
